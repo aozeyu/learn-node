@@ -1,9 +1,7 @@
 const experss = require('express')
+const {getPeople} = require('../controllers/people')
 const router = experss.Router()
-let {people} = require('../data')
-router.get('/',(req,res) => {
-  res.status(200).json({success: true, data: people})
-})
+router.get('/',getPeople)
 router.post('/',(req, res) => {
   const { name } = req.body
   if (!name) {
