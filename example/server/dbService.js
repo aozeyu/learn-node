@@ -74,6 +74,37 @@ class DbService{
       return false
     }
   }
+
+  async updateNameById(name,id){
+    try {
+      const response = await new Promise((resolve, reject) => {
+        const query = "UPDATE names SET name = ? WHERE id = ? ";
+        connection.query(query,[name,id],(err,result) => {
+          if (err) reject(new Error(err.message));
+          resolve(result.affectedRows) // 成功会将传给resolve的值给response
+        })
+      })
+      return response === 1 ? true : false
+    } catch (error) {
+      console.log(error)
+      return false
+    }
+  }
+
+  async searchName(name) {
+    try {
+      const response = await new Promise((resolve, reject) => {
+        const query = "SELECT * FROM names WHERE name = ?";
+        connection.query(query,[name],(err,results) => {
+          if (err) reject(new Error(err.message));
+          resolve(results) // 从数据库里查询到的数据
+        })
+      })
+      return response // response = [{}]
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 
 module.exports = DbService // 导出一个类

@@ -30,6 +30,19 @@ app.delete('/delete/:id',(request,response) => {
   const result = db.deleteById(id) // 数据库操作完返回的结果
   result.then(data => response.json({success: data})).catch(err => console.log(err))
 })
+
+app.patch('/update',(request,response) => {
+  const {id,name} = request.body
+  const db = dbService.getDbServiceInstance()
+  const result = db.updateNameById(name, id)
+  result.then(data => response.json({success: data})).catch(err => console.log(err))
+})
+app.get('/search/:name',(req,response) => {
+  const { name } = req.params
+  const db = dbService.getDbServiceInstance()
+  const result = db.searchName(name)
+  result.then(data => response.json({data: data})).catch(err => console.log(err))
+})
 app.listen(process.env.PORT,() => {
   console.log('app is running')
 })

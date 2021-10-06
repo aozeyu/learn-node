@@ -7,8 +7,17 @@ document.querySelector('table tbody').addEventListener('click',function (event) 
   if (event.target.className === 'delete-row-btn') {
     deleteRowById(event.target.dataset.id)
   }
+  if (event.target.className === 'edit-row-btn') {
+    handleEditRow(event.target.dataset.id)
+  }
 })
-
+const searchBtn = document.querySelector('#search-btn')
+searchBtn.onclick = function () {
+  const searchValue = document.querySelector('#search-input').value
+  fetch("http://localhost:5000/search/" + searchValue).then((response) => response.json())
+  .then((data) => loadHTMLTable(data["data"]));
+}
+const updateBtn = document.querySelector('#update-row-btn')
 //根据id删除行数据
 function deleteRowById(id) {
   //字符串加数字=字符串 将传入的id拼接成请求url
@@ -21,6 +30,12 @@ function deleteRowById(id) {
   })
 }
 
+function handleEditRow(id) {
+  const updateSection = document.querySelector('#update-section')
+  updateSection.hidden = false
+  document.querySelector('#update-row-btn').dataset.id = id // 将id设置给更新按钮
+  document.querySelector('#update-name-input').dataset.id = id
+}
 
 const addBtn = document.querySelector("#add-name-btn");
 addBtn.onclick = function () {
@@ -40,7 +55,20 @@ addBtn.onclick = function () {
     .then((data) => insertRowIntoTable(data["data"]))
     .catch((err) => console.log(err));
 };
-
+updateBtn.onclick = function () {
+  const updateNameInput = document.querySelector('#update-name-input')
+  fetch("http://localhost:5000/update", {
+    headers: {
+      "Content-type": "application/json",
+    },
+    method: 'PATCH',
+    body: JSON.stringify({id: updateNameInput.dataset.id, name: updateNameInput.value})
+  }).then(response => response.json()).then(data => {
+    if (data.success) {
+      location.reload()
+    }
+  })
+}
 function insertRowIntoTable(data) {
   //传入的data是一个对象不是数组
   const table = document.querySelector("table tbody");
